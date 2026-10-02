@@ -1,8 +1,8 @@
 const CONFIG = {
-  eventName: "DOORS Floor 2 Update",
+  eventName: "DOORS ACCESS GRANTED UPDATE",
   eventSubtitle: "When Does The Next DOORS Update Happen?",
-  eventDate: "2026-10-31", 
-  eventHour12: 6,
+  eventDate: "2026-10-02", 
+  eventHour12: 8,
   eventMinute: 0,
   eventAmPm: "PM",
   eventTimeZone: "America/New_York"
@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const minsEl = document.getElementById("m");
   const secsEl = document.getElementById("s");
   
-  const themeSelect = document.getElementById("theme-select");
   const tzSelect = document.getElementById("tz");
   const hhInput = document.getElementById("hh");
   const mmInput = document.getElementById("mm");
@@ -92,16 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     minsEl.textContent = minutes;
     secsEl.textContent = seconds;
   }
-
-  const savedTheme = localStorage.getItem("wdtnduh_theme") || "dark";
-  document.body.setAttribute("data-theme", savedTheme);
-  themeSelect.value = savedTheme;
-
-  themeSelect.addEventListener("change", (e) => {
-    const newTheme = e.target.value;
-    document.body.setAttribute("data-theme", newTheme);
-    localStorage.setItem("wdtnduh_theme", newTheme);
-  });
 
   tzSelect.addEventListener("change", updateDateDisplay);
 
