@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WDTNDUH - When Does The Next DOORS Update Happen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>WDTNDUH</h1>
+    <p>When Does The Next DOORS Update Happen?</p>
+  </header>
+
+  <main>
+    <p id="status">Loading...</p>
+    <p id="date"></p>
+
+    <div id="countdown" hidden>
+      <div><span id="d">0</span><small>Days</small></div>
+      <div><span id="h">0</span><small>Hours</small></div>
+      <div><span id="m">0</span><small>Min</small></div>
+      <div><span id="s">0</span><small>Sec</small></div>
+    </div>
+
+    <label class="tz" for="tz">Your time zone:</label>
+    <select id="tz"></select>
+
+    <div class="buttons">
+      <a class="btn" href="https://www.roblox.com/events/382911937220051536" target="_blank" rel="noopener">Roblox Event Page (Access Granted)</a>
+      <a class="btn" href="https://www.roblox.com/games/6516141723/DOORS" target="_blank" rel="noopener">Play DOORS</a>
+      <a class="btn" href="https://doors-game.fandom.com/wiki/Access_granted_Update" target="_blank" rel="noopener">Update Info (Wiki)</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>Unofficial fan site. Not affiliated with Roblox or LSPLASH.</p>
+    <p class="made">Made By Bandana</p>
+  </footer>
+
+  <script>
+    const UPDATE_NAME = "Access Granted";
+    const UPDATE_DATE = "2026-10-02";
+    const UPDATE_TIME_UTC = null;
+    const NEXT_UPDATE = UPDATE_TIME_UTC ? UPDATE_DATE + "T" + UPDATE_TIME_UTC + ":00Z" : null;
+
+    const status = document.getElementById("status");
+    const dateEl = document.getElementById("date");
+    const box = document.getElementById("countdown");
+    const tzSelect = document.getElementById("tz");
+
+    const FALLBACK = [
+      "UTC", "Europe/Warsaw", "Europe/London", "Europe/Berlin", "Europe/Kyiv",
+      "Europe/Moscow", "America/New_York", "America/Chicago", "America/Denver",
+      "America/Los_Angeles", "America/Sao_Paulo", "Asia/Dubai", "Asia/Kolkata",
+      "Asia/Shanghai", "Asia/Tokyo", "Australia/Sydney", "Pacific/Auckland"
+    ];
+    let zones = FALLBACK;
+    try {
+      if (Intl.supportedValuesOf) zones = Intl.supportedValuesOf("timeZone");
+    } catch (e) {}
+    if (!zones.includes("UTC")) zones = ["UTC", ...zones];
+
+    let userZone = "UTC";
+    try { userZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; } catch (e) {}
+
+    let saved = null;
+    try { saved = localStorage.getItem("wdtnduh-tz"); } catch (e) {}
+    let currentZone = saved && zones.includes(saved) ? saved : userZone;
+    if (!zones.includes(currentZone)) zones = [currentZone, ...zones];
+
+    zones.forEach(z => {
+      const o = document.createElement("option");
+      o.value = z;
+      o.textContent = z.replace(/_/g, " ");
+      tzSelect.appendChild(o);
+    });
+    tzSelect.value = currentZone;
+
+    tzSelect.addEventListener("change", () => {
+      currentZone = tzSelect.value;
+      try { localStorage.setItem("wdtnduh-tz", currentZone); } catch (e) {}
+      showDate();
+    });
+
+    function showDate() {
+      if (NEXT_UPDATE) {
+        dateEl.textContent = new Intl.DateTimeFormat("en-GB", {
+          timeZone: currentZone,
+          weekday: "long", day: "numeric", month: "long", year: "numeric",
+          hour: "2-digit", minute: "2-digit", timeZoneName: "short"
+        }).format(new Date(NEXT_UPDATE));
+      } else {
+        const d = new Date(UPDATE_DATE + "T12:00:00Z");
+        dateEl.textContent = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric"
+        }).format(d) + " (exact time not announced yet)";
+      }
+    }
+
+    function tick() {
+      const diff = new Date(NEXT_UPDATE) - Date.now();
+      if (diff <= 0) {
+        status.textContent = "The update is out! Go play!";
+        box.hidden = true;
+        return;
+      }
+      const sec = Math.floor(diff / 1000);
+      document.getElementById("d").textContent = Math.floor(sec / 86400);
+      document.getElementById("h").textContent = Math.floor(sec % 86400 / 3600);
+      document.getElementById("m").textContent = Math.floor(sec % 3600 / 60);
+      document.getElementById("s").textContent = sec % 60;
+      setTimeout(tick, 1000);
+    }
+
+    if (NEXT_UPDATE) {
+      status.textContent = UPDATE_NAME + " Update in:";
+      box.hidden = false;
+      showDate();
+      tick();
+    } else {
+      status.textContent = UPDATE_NAME + " Update";
+      showDate();
+    }
+  </script>
+</body>
+</html>
