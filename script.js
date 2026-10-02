@@ -18,11 +18,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const hoursEl = document.getElementById("h");
   const minsEl = document.getElementById("m");
   const secsEl = document.getElementById("s");
+  const tzSelect = document.getElementById("tz");
 
   eventTitleEl.textContent = CONFIG.eventName;
   eventSubtitleEl.textContent = CONFIG.eventSubtitle;
 
+  const timezones = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['UTC'];
   const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  timezones.forEach(tz => {
+    const opt = document.createElement("option");
+    opt.value = tz;
+    opt.textContent = tz;
+    if (tz === userTz) opt.selected = true;
+    tzSelect.appendChild(opt);
+  });
 
   function getTargetDate() {
     let hour24 = CONFIG.eventHour12 % 12;
@@ -43,14 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetDate = getTargetDate();
 
   function updateDateDisplay() {
+    const selectedTz = tzSelect.value;
     try {
       const formatted = new Intl.DateTimeFormat('en-US', {
         dateStyle: 'full',
         timeStyle: 'long',
-        timeZone: userTz
+        timeZone: selectedTz
       }).format(targetDate);
 
-      dateEl.textContent = `Event Time (${userTz}): ${formatted}`;
+      dateEl.textContent = `Event Time (${selectedTz}): ${formatted}`;
     } catch (e) {
       dateEl.textContent = `Target: ${targetDate.toString()}`;
     }
@@ -79,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
     minsEl.textContent = minutes;
     secsEl.textContent = seconds;
   }
+
+  tzSelect.addEventListener("change", updateDateDisplay);
 
   updateDateDisplay();
   updateCountdown();
