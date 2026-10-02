@@ -2,31 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WDTNDUH - When Does The Next DOORS Update Happen</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header>
-    <h1>WDTNDUH</h1>
-    <p>When Does The Next DOORS Update Happen?</p>
-  </header>
+<body data-theme="dark">
+  <div class="container" id="app-container">
+    <header>
+      <h1 id="event-title">WDTNDUH</h1>
+      <p id="event-subtitle">When Does The Next DOORS Update Happen?</p>
+    </header>
 
-  <main>
-    <p id="status">Loading...</p>
-    <p id="date"></p>
+    <main>
+      <p id="status">Loading...</p>
+      <p id="date" class="date-display"></p>
 
-    <div id="countdown" hidden>
-      <div><span id="d">0</span><small>Days</small></div>
-      <div><span id="h">0</span><small>Hours</small></div>
-      <div><span id="m">0</span><small>Min</small></div>
-      <div><span id="s">0</span><small>Sec</small></div>
-    </div>
+      <div id="countdown" class="countdown-grid" hidden>
+        <div class="time-card"><span id="d">0</span><small>Days</small></div>
+        <div class="time-card"><span id="h">0</span><small>Hours</small></div>
+        <div class="time-card"><span id="m">0</span><small>Min</small></div>
+        <div class="time-card"><span id="s">0</span><small>Sec</small></div>
+      </div>
 
-    <label class="tz" for="tz">Your time zone:</label>
-    <select id="tz"></select>
+      <section class="settings-panel">
+        <h2>Settings</h2>
 
-    <label class="tz" for="hh">Event time from the Roblox event page (in the time zone above):</label>
-    <div class="time">
-      <input id="hh" type="number" min="1" max="12" value="6" aria-label="Hour">
-      <span>:</span>
+        <div class="field">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select">
+            <option value="dark">Dark Default</option>
+            <option value="doors">DOORS Red</option>
+            <option value="light">Light</option>
+            <option value="cyber">Cyberpunk</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="tz">Your time zone:</label>
+          <select id="tz"></select>
+        </div>
+
+        <div class="field">
+          <label>Event Time (Edit via JS Code):</label>
+          <div class="time-input-group">
+            <input id="hh" type="number" min="1" max="12" value="6" aria-label="Hour" disabled>
+            <span>:</span>
+            <input id="mm" type="number" min="0" max="59" value="00" aria-label="Minute" disabled>
+            <select id="ampm" aria-label="AM/PM" disabled>
+              <option value="AM">AM</option>
+              <option value="PM" selected>PM</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="fullscreen-btn" class="btn">Enter Streamer Fullscreen</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
