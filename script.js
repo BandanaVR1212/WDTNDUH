@@ -1,6 +1,6 @@
 const CONFIG = {
-  eventName: "The Candy Vault 2026 Update",
-  eventSubtitle: "The Candy Vault 2026 Update is out! Go play it!     ( No Update Scheduled at this moment )",     // When Does The Next DOORS Update Happen?
+  eventName: "The Candy Vault 2026.10.22 Update",
+  eventSubtitle: "The Candy Vault 2026 Update is out! Go play it!     ( No Update Scheduled at this moment, also ignore the glitched date )",     // When Does The Next DOORS Update Happen?
   eventDate: "2026-10-22", 
   eventHour12: 12,
   eventMinute: 0,
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    statusEl.textContent = "Countdown to Update:";
+    statusEl.textContent = "When Does The Next DOORS Update Happen?   -- Made By Bandana";
     countdownEl.hidden = false;
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
