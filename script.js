@@ -1,8 +1,8 @@
 const CONFIG = {
   eventName: "The Candy Vault 2026 Update",
-  eventSubtitle: "The Candy Vault 2026 Update is out! Go play it!",     // When Does The Next DOORS Update Happen?
-  eventDate: "2026-10-23", 
-  eventHour12: 8,
+  eventSubtitle: "The Candy Vault 2026 Update is out! Go play it!     ( No Update Scheduled at this moment )",     // When Does The Next DOORS Update Happen?
+  eventDate: "2026-10-22", 
+  eventHour12: 12,
   eventMinute: 0,
   eventAmPm: "PM",
   eventTimeZone: "America/New_York"
