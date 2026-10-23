@@ -1,7 +1,7 @@
 const CONFIG = {
-  eventName: "DOORS ACCESS GRANTED Update",
-  eventSubtitle: "When Does The Next DOORS Update Happen?",
-  eventDate: "2026-10-02", 
+  eventName: "CANDY VAULT 2026 Update",
+  eventSubtitle: "The update already dropped go play it!",
+  eventDate: "2026-10-23", 
   eventHour12: 8,
   eventMinute: 0,
   eventAmPm: "PM",
@@ -23,34 +23,48 @@ document.addEventListener("DOMContentLoaded", () => {
   eventTitleEl.textContent = CONFIG.eventName;
   eventSubtitleEl.textContent = CONFIG.eventSubtitle;
 
-  const timezones = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['UTC'];
-  const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  function getTargetDateUTC(config) {
+    let hour24 = config.eventHour12 % 12;
+    if (config.eventAmPm.toUpperCase() === "PM") hour24 += 12;
+
+    const [year, month, day] = config.eventDate.split('-').map(Number);
+    const targetUtcGuess = Date.UTC(year, month - 1, day, hour24, config.eventMinute, 0);
+
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: config.eventTimeZone,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false
+    });
+
+    const parts = formatter.formatToParts(new Date(targetUtcGuess));
+    const p = {};
+    for (const part of parts) {
+      if (part.type !== 'literal') p[part.type] = parseInt(part.value, 10);
+    }
+    const targetHour = p.hour === 24 ? 0 : p.hour;
+    const actualDateInTz = Date.UTC(p.year, p.month - 1, p.day, targetHour, p.minute, p.second);
+    const offset = targetUtcGuess - actualDateInTz;
+
+    return new Date(targetUtcGuess + offset);
+  }
+
+  const targetDate = getTargetDateUTC(CONFIG);
+
+  const timezones = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['UTC', CONFIG.eventTimeZone];
+  const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
   timezones.forEach(tz => {
     const opt = document.createElement("option");
     opt.value = tz;
-    opt.textContent = tz;
+    opt.textContent = tz.replace(/_/g, " ");
     if (tz === userTz) opt.selected = true;
     tzSelect.appendChild(opt);
   });
-
-  function getTargetDate() {
-    let hour24 = CONFIG.eventHour12 % 12;
-    if (CONFIG.eventAmPm.toUpperCase() === "PM") hour24 += 12;
-
-    const hh = String(hour24).padStart(2, '0');
-    const mm = String(CONFIG.eventMinute).padStart(2, '0');
-    
-    const isoString = `${CONFIG.eventDate}T${hh}:${mm}:00`;
-    
-    const eventDateInTz = new Date(new Date(isoString).toLocaleString('en-US', { timeZone: CONFIG.eventTimeZone }));
-    const eventDateUtc = new Date(isoString + "Z");
-    const diff = eventDateUtc.getTime() - eventDateInTz.getTime();
-    
-    return new Date(eventDateUtc.getTime() + diff);
-  }
-
-  const targetDate = getTargetDate();
 
   function updateDateDisplay() {
     const selectedTz = tzSelect.value;
@@ -63,15 +77,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       dateEl.textContent = `Event Time (${selectedTz}): ${formatted}`;
     } catch (e) {
-      dateEl.textContent = `Target: ${targetDate.toString()}`;
+      dateEl.textContent = `Target: ${targetDate.toUTCString()}`;
     }
   }
 
   function updateCountdown() {
-    const now = new Date().getTime();
+    const now = Date.now();
     const distance = targetDate.getTime() - now;
 
-    if (distance < 0) {
+    if (distance <= 0) {
       statusEl.textContent = "The event has started!";
       countdownEl.hidden = true;
       return;
