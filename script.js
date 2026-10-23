@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const distance = targetDate.getTime() - now;
 
     if (distance < 0) {
-      statusEl.textContent = "The event has started!";
+      statusEl.textContent = "The event has started! - When Does The Next DOORS Update Happen?   -- Made By Bandana";
       countdownEl.hidden = true;
       return;
     }
